@@ -1,0 +1,11 @@
+# Local runtime, tokens, and large optional asset packs (excluded from Marketplace repo)
+.frame-runtime/
+White Paper Textures/
+Shadow Overlays/
+
+# OS & Python artifacts
+.DS_Store
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/

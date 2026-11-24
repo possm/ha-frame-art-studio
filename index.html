@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frame Art Studio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Frame Art Studio</h1>
+      <p>Passe-partout, ledbalk-simulatie en dag/avond-export voor Samsung The Frame</p>
+    </div>
+    <div class="export">
+      <label for="format">Bestandstype</label>
+      <select id="format">
+        <option value="JPEG">JPEG</option>
+        <option value="PNG">PNG</option>
+      </select>
+      <button id="saveSingle" type="button" class="quiet">Alleen Avond</button>
+      <button id="save" type="button">Download Dag + Avond (4K)</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="workspace">
+      <div class="workspace-bar">
+        <div class="profile-switch" role="group" aria-label="Bewerk lichtversie">
+          <button type="button" class="profile-btn" data-profile="day" aria-pressed="false">Dag-versie</button>
+          <button type="button" class="profile-btn" data-profile="evening" aria-pressed="true">Avond-versie</button>
+        </div>
+        <div class="workspace-toggles">
+          <button type="button" id="wallPreview" class="toggle" aria-pressed="true">Wandvoorbeeld</button>
+          <button type="button" id="compareOriginal" class="toggle" aria-pressed="false">Zonder licht</button>
+          <button type="button" id="resetAll" class="quiet">Herstel standaard</button>
+        </div>
+      </div>
+
+      <div class="stage" id="stage" data-wall="true" data-scene="evening">
+        <div class="wall-alcove">
+          <div class="tv-bezel">
+            <canvas id="preview" width="1920" height="1080" aria-label="Voorvertoning van het kunstwerk met passe-partout en lichtsimulatie"></canvas>
+          </div>
+        </div>
+        <div class="drop-hint" id="dropHint" aria-hidden="true">Laat los om afbeelding te openen</div>
+      </div>
+
+      <div class="caption">
+        <span id="artName">Voorbeeld</span>
+        <span class="caption-meta">Sleep op beeld om uit te snijden · 3840 × 2160 px</span>
+      </div>
+      <p id="localLibrary" hidden>Open de <a href="http://127.0.0.1:8765/">lokale editor</a> om de projectbestanden direct te kiezen.</p>
+      <p id="status" role="status"></p>
+    </div>
+
+    <aside aria-label="Instellingen">
+      <fieldset>
+        <legend>Kunstwerk (gedeeld)</legend>
+        <div class="asset">
+          <label class="file" for="art">Open afbeelding<input id="art" type="file" accept="image/*"></label>
+          <button type="button" id="autoMat" class="quiet">Pas karton aan foto aan</button>
+        </div>
+        <div class="controls">
+          <div class="select-row">
+            <label for="fitMode">Schaling in uitsnede</label>
+            <select id="fitMode">
+              <option value="cover">Vullend (bijsnijden)</option>
+              <option value="contain">Passend (volledig beeld)</option>
+            </select>
+          </div>
+        </div>
+        <div class="controls" id="artControls"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend id="lightLegend">Licht &amp; dimming · Avond-versie</legend>
+        <p class="fieldset-note" id="profileNote">Instellingen hieronder gelden apart voor de Dag- en Avond-versie. Uitsnede en passe-partout blijven exact gelijk.</p>
+
+        <div class="preset-grid" role="group" aria-label="Lichtpresets voor actieve versie">
+          <button type="button" class="preset" data-preset="evening" aria-pressed="false">Avond · Ledbalk</button>
+          <button type="button" class="preset" data-preset="darkRoom" aria-pressed="true">Donkere avond</button>
+          <button type="button" class="preset" data-preset="daylight" aria-pressed="false">Overdag · Zacht</button>
+          <button type="button" class="preset" data-preset="neutral" aria-pressed="false">Uit · Neutraal</button>
+        </div>
+
+        <div class="ramp-card">
+          <div class="ramp-labels">
+            <span id="rampStartLabel">Boven (ledbalk)</span>
+            <span id="dimSummary">Schermlicht ~46%</span>
+            <span id="rampEndLabel">Onder (schaduw)</span>
+          </div>
+          <div class="light-ramp" id="lightRamp" aria-hidden="true"></div>
+          <div class="ramp-hex" id="rampHex"></div>
+        </div>
+
+        <div class="color-pair">
+          <div class="color">
+            <label for="ledColor" id="ledColorLabel">Lichtkleur (boven)</label>
+            <input id="ledColor" type="color" value="#fff1be">
+          </div>
+          <div class="color">
+            <label for="shadowColor" id="shadowColorLabel">Kleur donkere deel (onder)</label>
+            <input id="shadowColor" type="color" value="#66521e">
+          </div>
+        </div>
+        <div class="controls" id="ledControls"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Passe-partout (gedeeld)</legend>
+        <div class="color">
+          <label for="matColor">Kartonkleur</label>
+          <input id="matColor" type="color" value="#f8f6f0">
+        </div>
+        <div class="controls" id="matControls"></div>
+        <div class="asset">
+          <label class="file" for="textureFolder">Kies textuurmap<input id="textureFolder" type="file" webkitdirectory></label>
+        </div>
+        <div class="controls" id="textureLibrary" hidden>
+          <label for="texturePreset">Papiertextuur uit map</label>
+          <select id="texturePreset"></select>
+        </div>
+        <div class="asset">
+          <label class="file" for="texture">Open kartontextuur<input id="texture" type="file" accept="image/*"></label>
+          <button type="button" id="clearTexture" class="quiet" aria-label="Verwijder kartontextuur" hidden>Verwijder</button>
+        </div>
+        <p id="textureName" class="filename">Ingebouwde papierkorrel</p>
+        <div class="controls" id="textureControls"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Binnensnede &amp; extra overlay</legend>
+        <div class="controls" id="lightControls"></div>
+        <div class="asset">
+          <label class="file" for="shadowFolder">Kies overlaymap<input id="shadowFolder" type="file" webkitdirectory></label>
+        </div>
+        <div class="controls" id="shadowLibrary" hidden>
+          <label for="shadowPreset">Extra schaduwoverlay</label>
+          <select id="shadowPreset"></select>
+        </div>
+        <div class="asset">
+          <label class="file" for="shadow">Open schaduwoverlay<input id="shadow" type="file" accept="image/*"></label>
+          <button type="button" id="clearShadow" class="quiet" aria-label="Verwijder schaduwoverlay" hidden>Verwijder</button>
+        </div>
+        <p id="shadowName" class="filename">Geen extra overlay</p>
+        <div class="controls" id="shadowControls"></div>
+      </fieldset>
+
+      <fieldset id="tvControls" hidden>
+        <legend>Samsung The Frame</legend>
+        <form id="tvForm" class="controls">
+          <div id="tvAddressField" class="select-row">
+            <label for="tvAddress">Lokaal IP-adres van de tv</label>
+            <input id="tvAddress" type="text" inputmode="decimal" value="192.168.1.92" required>
+          </div>
+          <div id="tvSelectField" class="select-row" hidden>
+            <label for="tvSelect">Home Assistant tv</label>
+            <select id="tvSelect"></select>
+          </div>
+          <div class="checkbox-row">
+            <input id="tvReplacePrevious" type="checkbox" checked>
+            <label for="tvReplacePrevious">Vervang vorige upload(s) op tv</label>
+          </div>
+          <div class="tv-actions">
+            <button id="sendTvBoth" type="submit">Stuur Dag + Avond naar tv</button>
+            <button id="sendTvSingle" type="button" class="quiet">Alleen Avond</button>
+          </div>
+        </form>
+        <div id="tvSlotsCard" class="tv-slots" hidden>
+          <p class="tv-slots-title">Laatste content_id's (automatisering)</p>
+          <div id="tvSlotsList" class="tv-slots-list"></div>
+        </div>
+        <div class="asset">
+          <button id="openTvGallery" type="button" class="quiet">Beheer Mijn foto's op tv</button>
+        </div>
+        <p id="tvStatus" class="filename" role="status"></p>
+      </fieldset>
+    </aside>
+  </main>
+
+  <dialog id="tvGalleryDialog" closedby="any" aria-labelledby="tvGalleryTitle">
+    <div class="dialog-header">
+      <div>
+        <h1 id="tvGalleryTitle">Mijn foto's op Samsung The Frame</h1>
+        <p id="tvGalleryStatus" class="dialog-subtitle" role="status">Klaar om lijst op te halen.</p>
+      </div>
+      <div class="dialog-header-actions">
+        <button id="refreshTvGallery" type="button" class="quiet">Vernieuw</button>
+        <form method="dialog">
+          <button type="submit" autofocus>Sluiten</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="dialog-toolbar">
+      <div class="dialog-toolbar-group">
+        <button id="selectOldTvArt" type="button" class="quiet">Selecteer oude</button>
+        <button id="clearTvSelection" type="button" class="quiet">Deselecteer alles</button>
+      </div>
+      <button id="deleteSelectedTvArt" type="button" class="danger" disabled>Verwijder geselecteerde (0)</button>
+    </div>
+
+    <div id="tvGalleryBody" class="dialog-body">
+      <div id="tvGalleryGrid" class="tv-grid"></div>
+    </div>
+  </dialog>
+</body>
+</html>

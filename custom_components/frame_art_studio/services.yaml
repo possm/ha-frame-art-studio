@@ -1,0 +1,21 @@
+select_mode:
+  name: Kies Dag- of Avond-kunstwerk
+  description: Schakelt Samsung The Frame in Art Mode naar het laatst geüploade Dag- of Avond-content_id.
+  fields:
+    mode:
+      name: Modus
+      description: Kies 'day' voor de Dag-versie of 'evening' voor de Avond-versie.
+      required: true
+      selector:
+        select:
+          options:
+            - label: Dag
+              value: day
+            - label: Avond
+              value: evening
+    host:
+      name: TV IP-adres (optioneel)
+      description: Alleen nodig als je meerdere Frame TV's hebt geconfigureerd.
+      required: false
+      selector:
+        text:

@@ -1,0 +1,14 @@
+{
+  "domain": "frame_art_studio",
+  "name": "Frame Art Studio",
+  "version": "1.0.0",
+  "documentation": "https://github.com/possm/ha-frame-art-studio",
+  "issue_tracker": "https://github.com/possm/ha-frame-art-studio/issues",
+  "codeowners": ["@possm"],
+  "config_flow": true,
+  "dependencies": ["http", "panel_custom"],
+  "requirements": ["samsungtvws>=2.7.0"],
+  "iot_class": "local_push",
+  "integration_type": "device",
+  "categories": ["media_player"]
+}

@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Frame Art Studio",
+        "description": "Koppel je Samsung The Frame voor 4K Dag/Avond passe-partout uploads en automatische content_id sensors.",
+        "data": {
+          "host": "Lokaal IP-adres van de tv",
+          "name": "Naam van de tv",
+          "show_sidebar": "Toon Frame Art Studio in de Home Assistant-zijbalk"
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "Vul een geldig lokaal IPv4-adres in (bijv. 192.168.1.92)."
+    },
+    "abort": {
+      "already_configured": "Deze Samsung The Frame is al geconfigureerd."
+    }
+  }
+}

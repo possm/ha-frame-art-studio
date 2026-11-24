@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Frame Art Studio",
+        "description": "Connect your Samsung The Frame for 4K Day/Evening mat uploads and automatic content_id sensors.",
+        "data": {
+          "host": "Local TV IP address",
+          "name": "TV name",
+          "show_sidebar": "Show Frame Art Studio in the Home Assistant sidebar"
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "Enter a valid local IPv4 address (e.g. 192.168.1.92)."
+    },
+    "abort": {
+      "already_configured": "This Samsung The Frame is already configured."
+    }
+  }
+}
