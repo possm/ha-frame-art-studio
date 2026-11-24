@@ -2,9 +2,15 @@
 
 **Frame Art Studio** is een custom integration voor **Home Assistant** waarmee je rechtstreeks vanuit de zijbalk 4K-kunstwerken met passe-partout en realistische omgevingslicht-simulatie maakt en naar je **Samsung The Frame** stuurt — zonder aparte webserver of externe tools.
 
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="docs/screenshot-light.png">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
+  <img alt="Frame Art Studio in Home Assistant" src="docs/screenshot-dark.png">
+</picture>
+
 ## Belangrijkste functies
 
-- **Volledige studio in Home Assistant** — werkt op desktop, tablet en in de Home Assistant Companion App, direct achter je bestaande Home Assistant-login.
+- **100% Home Assistant-native interface** — neemt automatisch je actieve Home Assistant-thema over (Donker, Licht én aangepaste thema's) en werkt op desktop, tablet en in de Home Assistant Companion App, direct achter je bestaande Home Assistant-login.
 - **Haarscherpe 4K-rendering in de browser** — stapsgewijze downscaling voor grote bronfoto's, 32-bit float licht- en dimberekening met dithering en export als verliesvrije 4K PNG of hoge kwaliteit JPEG.
 - **Aparte Dag- en Avond-profielen** — één gedeelde uitsnede en passe-partout met afzonderlijke lichtinstellingen voor overdag en 's avonds, in één klik naar je tv te sturen.
 - **TV-galerij & slot-koppeling** — bekijk je geüploade kunstwerken op de tv, ruim oude versies in bulk op (het actieve kunstwerk is beschermd) of koppel bestaande foto's op je tv direct als **Dag**- of **Avond**-versie.
