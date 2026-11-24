@@ -391,6 +391,8 @@ class EditorHandler(SimpleHTTPRequestHandler):
             return self.handle_batch_art()
         if self.path == "/api/tv/select":
             return self.handle_tv_select()
+        if self.path == "/api/tv/assign":
+            return self.handle_tv_assign()
         if self.path == "/api/tv/delete":
             return self.handle_tv_delete()
         return self.respond(404, "Onbekende route.")
@@ -509,6 +511,27 @@ class EditorHandler(SimpleHTTPRequestHandler):
             return self.respond(502, f"Kon {content_id} niet selecteren op de tv.")
         finally:
             TV_LOCK.release()
+
+    def handle_tv_assign(self):
+        try:
+            body = self.read_json_body(64 * 1024)
+            address = parse_lan_address(body.get("address", ""))
+            slot = str(body.get("slot") or "").strip().lower()
+            if slot not in ("day", "evening"):
+                raise ValueError("Kies 'day' of 'evening' als slot.")
+            content_id = validate_content_id(body.get("contentId"))
+        except Exception as err:
+            return self.respond(400, str(err) or "Ongeldige aanvraag.")
+
+        slots = update_tv_slots(address, **{slot: content_id})
+        label = "Dag" if slot == "day" else "Avond"
+        return self.respond(
+            200,
+            f"{content_id} gekoppeld als {label}-versie.",
+            slot=slot,
+            contentId=content_id,
+            slots=slots,
+        )
 
     def handle_tv_delete(self):
         try:

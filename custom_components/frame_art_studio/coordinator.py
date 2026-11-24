@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime
+import logging
 from typing import Any
 
 from homeassistant.core import HomeAssistant
@@ -11,6 +12,8 @@ from homeassistant.helpers.storage import Store
 
 from .const import SLOT_DAY, SLOT_EVENING, STORAGE_KEY, STORAGE_VERSION
 from .tv import FrameTVClient
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class FrameGeneratorEntryData:
@@ -31,6 +34,10 @@ class FrameGeneratorEntryData:
         self.host = host
         self.client = client
         self.store = store
+        self.active_content_id: str | None = None
+        self.tv_reachable: bool | None = None
+        self.last_polled: str | None = None
+        self.unsub_poll: Callable[[], None] | None = None
         self._listeners: list[Callable[[], None]] = []
 
     @property
@@ -41,6 +48,17 @@ class FrameGeneratorEntryData:
     def active_mode(self) -> str | None:
         mode = self.slots.get("activeMode")
         return mode if mode in (SLOT_DAY, SLOT_EVENING) else None
+
+    @property
+    def matched_active_slot(self) -> str | None:
+        if not self.active_content_id:
+            return None
+        slots = self.slots
+        if self.active_content_id == slots.get(SLOT_DAY):
+            return SLOT_DAY
+        if self.active_content_id == slots.get(SLOT_EVENING):
+            return SLOT_EVENING
+        return None
 
     def add_listener(self, callback: Callable[[], None]) -> Callable[[], None]:
         self._listeners.append(callback)
@@ -71,6 +89,53 @@ class FrameGeneratorEntryData:
         self.notify()
         return updated
 
+    async def async_set_active_artwork(
+        self,
+        content_id: str | None,
+        *,
+        persist_mode: bool = True,
+    ) -> None:
+        """Record the currently active artwork reported by the TV."""
+        self.active_content_id = content_id
+        self.tv_reachable = True
+        self.last_polled = datetime.now().isoformat(timespec="seconds")
+        if persist_mode and content_id:
+            slots = self.slots
+            if content_id == slots.get(SLOT_DAY) and self.active_mode != SLOT_DAY:
+                await self.async_update_slots(active_mode=SLOT_DAY)
+                return
+            if content_id == slots.get(SLOT_EVENING) and self.active_mode != SLOT_EVENING:
+                await self.async_update_slots(active_mode=SLOT_EVENING)
+                return
+        self.notify()
+
+    async def async_assign_slot(self, slot: str, content_id: str) -> dict[str, Any]:
+        """Link an existing TV artwork content_id to the Day or Evening slot."""
+        if slot not in (SLOT_DAY, SLOT_EVENING):
+            raise ValueError("Slot moet 'day' of 'evening' zijn.")
+        update_kwargs: dict[str, Any] = {slot: content_id}
+        if self.active_content_id == content_id:
+            update_kwargs["active_mode"] = slot
+        return await self.async_update_slots(**update_kwargs)
+
+    async def async_refresh_current_art(self) -> str | None:
+        """Poll the TV once for the currently displayed Art Mode content_id."""
+        try:
+            content_id = await self.client.async_get_current_art()
+        except Exception as err:
+            _LOGGER.debug(
+                "Could not refresh current artwork for %s (%s): %s",
+                self.name,
+                self.host,
+                err,
+            )
+            self.tv_reachable = False
+            self.last_polled = datetime.now().isoformat(timespec="seconds")
+            self.notify()
+            return None
+        await self.async_set_active_artwork(content_id)
+        return content_id
+
     async def async_select_mode(self, mode: str) -> str:
         """Switch the TV to the stored Day or Evening content_id."""
         if mode not in (SLOT_DAY, SLOT_EVENING):
@@ -79,9 +144,12 @@ class FrameGeneratorEntryData:
         if not content_id:
             label = "Dag" if mode == SLOT_DAY else "Avond"
             raise ValueError(
-                f"Er is nog geen {label}-afbeelding geüpload via Frame Art Studio."
+                f"Er is nog geen {label}-afbeelding gekoppeld via Frame Art Studio."
             )
         await self.client.async_select_art(content_id)
+        self.active_content_id = content_id
+        self.tv_reachable = True
+        self.last_polled = datetime.now().isoformat(timespec="seconds")
         await self.async_update_slots(active_mode=mode)
         return content_id
 

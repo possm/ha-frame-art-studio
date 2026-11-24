@@ -140,6 +140,8 @@ class FrameUploadView(HomeAssistantView):
 
         update_kwargs: dict[str, Any] = {slot: content_id}
         if select:
+            entry.active_content_id = content_id
+            entry.tv_reachable = True
             update_kwargs["active_mode"] = slot
         slots = await entry.async_update_slots(**update_kwargs)
 
@@ -186,6 +188,8 @@ class FrameLibraryView(HomeAssistantView):
                 status_code=502,
             )
 
+        await entry.async_set_active_artwork(current_id)
+
         return self.json(
             {
                 "message": f"{len(items)} eigen foto's gevonden op {entry.name}.",
@@ -228,16 +232,51 @@ class FrameSelectView(HomeAssistantView):
                 status_code=502,
             )
 
-        # Keep activeMode entity synced if selected ID matches Day or Evening slot
+        # Keep active artwork sensor and activeMode entity synced
+        await entry.async_set_active_artwork(content_id)
         slots = entry.slots
-        if content_id == slots.get(SLOT_DAY):
-            slots = await entry.async_update_slots(active_mode=SLOT_DAY)
-        elif content_id == slots.get(SLOT_EVENING):
-            slots = await entry.async_update_slots(active_mode=SLOT_EVENING)
 
         return self.json(
             {
                 "message": f"{content_id} wordt nu getoond in Art Mode.",
+                "contentId": content_id,
+                "slots": slots,
+            }
+        )
+
+
+class FrameAssignView(HomeAssistantView):
+    """Assign an existing TV artwork content_id to the Day or Evening slot."""
+
+    url = "/api/frame_art_studio/assign"
+    name = "api:frame_art_studio:assign"
+    requires_auth = True
+
+    async def post(self, request: web.Request) -> web.Response:
+        hass: HomeAssistant = request.app["hass"]
+        try:
+            body = await request.json()
+            entry = _resolve_entry(hass, body.get("entryId"))
+            if entry is None:
+                return self.json(
+                    {"message": "Geen geconfigureerde Frame TV gevonden."},
+                    status_code=404,
+                )
+            slot = str(body.get("slot") or "").strip().lower()
+            if slot not in VALID_SLOTS:
+                raise ValueError("Kies 'day' of 'evening' als slot.")
+            content_id = validate_content_id(body.get("contentId"))
+        except Exception as err:
+            return self.json(
+                {"message": str(err) or "Ongeldige aanvraag."}, status_code=400
+            )
+
+        slots = await entry.async_assign_slot(slot, content_id)
+        label = "Dag" if slot == SLOT_DAY else "Avond"
+        return self.json(
+            {
+                "message": f"{content_id} gekoppeld als {label}-versie op {entry.name}.",
+                "slot": slot,
                 "contentId": content_id,
                 "slots": slots,
             }

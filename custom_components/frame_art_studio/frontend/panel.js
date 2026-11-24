@@ -94,7 +94,7 @@ class FrameArtStudioPanel extends HTMLElement {
 
     const iframe = document.createElement('iframe');
     iframe.title = 'Frame Art Studio';
-    iframe.src = '/frame_art_studio_static/index.html?ha=1&v=1.0.0-2';
+    iframe.src = '/frame_art_studio_static/index.html?ha=1&v=1.0.0-3';
     iframe.addEventListener('load', () => this._attachBridge());
     this._iframe = iframe;
 

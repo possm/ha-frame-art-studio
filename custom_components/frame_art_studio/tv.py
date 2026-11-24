@@ -58,9 +58,14 @@ def fetch_tv_device_info(host: str, timeout: float = 3.5) -> dict[str, Any]:
 
 
 @contextmanager
-def open_tv_art(host: str, token_dir: Path):
+def open_tv_art(
+    host: str,
+    token_dir: Path,
+    timeout: float = 25,
+    connect_timeout: float = 3.5,
+):
     """Open a Samsung Art Mode session supporting both samsungtvws 3.x and 2.x."""
-    check_tv_reachable(host, port=TV_PORT, timeout=3.5)
+    check_tv_reachable(host, port=TV_PORT, timeout=connect_timeout)
     token_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     token_file = str(token_dir / host)
 
@@ -72,7 +77,7 @@ def open_tv_art(host: str, token_dir: Path):
         tv = SamsungTVWS(
             host,
             port=TV_PORT,
-            timeout=25,
+            timeout=timeout,
             name="Frame Art Studio",
             token_file=token_file,
         )
@@ -88,7 +93,7 @@ def open_tv_art(host: str, token_dir: Path):
     with SamsungTVArt(
         host,
         port=TV_PORT,
-        timeout=25,
+        timeout=timeout,
         name="Frame Art Studio",
         token_file=token_file,
     ) as art:
@@ -244,6 +249,16 @@ def _select_art_sync(host: str, token_dir: Path, content_id: str) -> None:
         art.select_image(content_id, show=True)
 
 
+def _get_current_art_sync(host: str, token_dir: Path) -> str | None:
+    with open_tv_art(host, token_dir, timeout=8, connect_timeout=2.5) as art:
+        current = art.get_current()
+        if isinstance(current, dict):
+            cid = current.get("content_id")
+            if isinstance(cid, str) and cid:
+                return cid
+    return None
+
+
 def _delete_art_sync(
     host: str,
     token_dir: Path,
@@ -316,6 +331,14 @@ class FrameTVClient:
                 self.host,
                 self._token_dir,
                 content_id,
+            )
+
+    async def async_get_current_art(self) -> str | None:
+        async with self._lock:
+            return await self._hass.async_add_executor_job(
+                _get_current_art_sync,
+                self.host,
+                self._token_dir,
             )
 
     async def async_delete_art(

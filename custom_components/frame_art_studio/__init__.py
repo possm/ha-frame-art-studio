@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from pathlib import Path
 
 import voluptuous as vol
@@ -12,6 +13,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
     CONF_HOST,
@@ -31,6 +33,7 @@ from .const import (
 )
 from .coordinator import FrameGeneratorEntryData, SlotStore
 from .http_views import (
+    FrameAssignView,
     FrameConfigView,
     FrameDeleteView,
     FrameLibraryView,
@@ -74,6 +77,7 @@ async def _async_ensure_domain_setup(hass: HomeAssistant) -> dict:
     hass.http.register_view(FrameUploadView())
     hass.http.register_view(FrameLibraryView())
     hass.http.register_view(FrameSelectView())
+    hass.http.register_view(FrameAssignView())
     hass.http.register_view(FrameDeleteView())
 
     async def _handle_select_mode(call: ServiceCall) -> None:
@@ -155,6 +159,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     await _async_sync_sidebar_panel(hass, domain_data)
+
+    # Gently fetch the currently displayed artwork in the background & every 5 minutes
+    hass.async_create_task(entry_data.async_refresh_current_art())
+
+    async def _poll_current(_now) -> None:
+        await entry_data.async_refresh_current_art()
+
+    entry_data.unsub_poll = async_track_time_interval(
+        hass, _poll_current, timedelta(minutes=5)
+    )
     return True
 
 
@@ -163,7 +177,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         domain_data = hass.data.get(DOMAIN, {})
-        domain_data.get("entries", {}).pop(entry.entry_id, None)
+        removed: FrameGeneratorEntryData | None = domain_data.get("entries", {}).pop(
+            entry.entry_id, None
+        )
+        if removed and removed.unsub_poll:
+            removed.unsub_poll()
+            removed.unsub_poll = None
         await _async_sync_sidebar_panel(hass, domain_data)
     return unload_ok
 

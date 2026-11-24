@@ -1899,6 +1899,22 @@ function renderTvGallery() {
     showBtn.setAttribute('aria-label', `Toon ${cid} op tv`);
     showBtn.addEventListener('click', () => selectOnTv(cid, tvGalleryStatus));
 
+    const dayBtn = document.createElement('button');
+    dayBtn.type = 'button';
+    dayBtn.className = 'mini-btn';
+    dayBtn.textContent = 'Als Dag';
+    dayBtn.disabled = item.slot === 'day';
+    dayBtn.setAttribute('aria-label', `Koppel ${cid} als Dag-versie`);
+    dayBtn.addEventListener('click', () => assignTvSlot('day', cid));
+
+    const eveningBtn = document.createElement('button');
+    eveningBtn.type = 'button';
+    eveningBtn.className = 'mini-btn';
+    eveningBtn.textContent = 'Als Avond';
+    eveningBtn.disabled = item.slot === 'evening';
+    eveningBtn.setAttribute('aria-label', `Koppel ${cid} als Avond-versie`);
+    eveningBtn.addEventListener('click', () => assignTvSlot('evening', cid));
+
     const copyBtn = document.createElement('button');
     copyBtn.type = 'button';
     copyBtn.className = 'mini-btn';
@@ -1914,9 +1930,51 @@ function renderTvGallery() {
     delBtn.setAttribute('aria-label', `Verwijder ${cid} van tv`);
     delBtn.addEventListener('click', () => deleteTvItems([cid]));
 
-    actions.append(showBtn, copyBtn, delBtn);
+    actions.append(showBtn, dayBtn, eveningBtn, copyBtn, delBtn);
     card.append(thumbWrap, head, actions);
     tvGalleryGrid.append(card);
+  }
+}
+
+async function assignTvSlot(slot, contentId) {
+  const label = slot === 'day' ? 'Dag' : 'Avond';
+  tvGalleryStatus.textContent = `${contentId} koppelen als ${label}-versie…`;
+  try {
+    let payload;
+    if (isHomeAssistantMode) {
+      const entryId = getSelectedHaEntryId();
+      if (!entryId) {
+        throw new Error('Geen Frame TV geconfigureerd in Home Assistant.');
+      }
+      payload = await tvJsonRequest('/api/frame_art_studio/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entryId, slot, contentId })
+      });
+      updateCachedHaSlots(entryId, payload.slots);
+    } else {
+      const address = get('tvAddress').value.trim();
+      if (!address) {
+        throw new Error('Vul eerst het IP-adres van de tv in.');
+      }
+      payload = await tvJsonRequest('/api/tv/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address, slot, contentId })
+      });
+    }
+    for (const item of tvGalleryItems) {
+      if (item.contentId === contentId) {
+        item.slot = slot;
+      } else if (item.slot === slot) {
+        item.slot = null;
+      }
+    }
+    renderTvSlots(payload.slots);
+    renderTvGallery();
+    tvGalleryStatus.textContent = payload.message || `${contentId} gekoppeld als ${label}-versie.`;
+  } catch (error) {
+    tvGalleryStatus.textContent = error.message || `Koppelen als ${label}-versie is niet gelukt.`;
   }
 }
 
