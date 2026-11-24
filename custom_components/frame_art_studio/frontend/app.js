@@ -973,6 +973,7 @@ function refresh() {
     get('shade').disabled = !hasOverlay;
     get('rotation').disabled = !hasOverlay;
     get('shadowBlur').disabled = !hasOverlay;
+    updateMatSummary();
     updateRampPreview();
     render(preview, { profileName: activeProfile, skipLighting: compareOriginal });
   });
@@ -1005,12 +1006,22 @@ function syncProfileUI() {
   syncPresetButtons();
 }
 
+function updateMatSummary() {
+  const el = get('matSummary');
+  if (!el) return;
+  const x = Math.round(shared.matX * 10) / 10;
+  const y = Math.round(shared.matY * 10) / 10;
+  const bevel = Math.round(shared.bevel);
+  el.textContent = `${x}% / ${y}% · ${bevel} px`;
+}
+
 function syncSharedUI() {
   get('fitMode').value = shared.fitMode;
   get('matColor').value = shared.matColor;
   for (const [id] of slidersMeta) {
     if (!PROFILE_KEYS.has(id)) updateSliderUI(id, shared[id]);
   }
+  updateMatSummary();
 }
 
 function switchProfile(name) {
@@ -2057,7 +2068,27 @@ async function deleteTvItems(contentIds) {
   }
 }
 
+function syncHaNarrowState() {
+  const menuBtn = get('haMenuBtn');
+  if (!menuBtn) return;
+  const bridge = getHaBridge();
+  const isNarrow = Boolean(
+    bridge?.narrow || document.documentElement.dataset.haNarrow === 'true'
+  );
+  menuBtn.hidden = !(isHomeAssistantMode && isNarrow);
+}
+
+const haMenuBtn = get('haMenuBtn');
+if (haMenuBtn) {
+  haMenuBtn.addEventListener('click', () => {
+    getHaBridge()?.toggleMenu?.();
+  });
+}
+
+window.addEventListener('ha-frame-narrow-change', syncHaNarrowState);
+
 window.addEventListener('ha-frame-bridge-ready', () => {
+  syncHaNarrowState();
   if (isHomeAssistantMode) loadTvSlots();
 });
 
@@ -2089,5 +2120,6 @@ get('deleteSelectedTvArt').addEventListener('click', () => {
 loadState();
 syncSharedUI();
 syncProfileUI();
+syncHaNarrowState();
 loadTvSlots();
 refresh();

@@ -1,7 +1,7 @@
 {
   "domain": "frame_art_studio",
   "name": "Frame Art Studio",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "documentation": "https://github.com/possm/ha-frame-art-studio",
   "issue_tracker": "https://github.com/possm/ha-frame-art-studio/issues",
   "codeowners": ["@possm"],

@@ -3,203 +3,280 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>Frame Art Studio</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var t = params.get('theme');
+      if (t === 'dark' || t === 'light') {
+        document.documentElement.dataset.haTheme = t;
+        document.documentElement.style.colorScheme = t;
+      }
+      if (params.has('ha') || location.pathname.startsWith('/frame_art_studio_static')) {
+        document.documentElement.classList.add('is-ha-mode');
+      }
+      if (params.get('narrow') === '1') {
+        document.documentElement.dataset.haNarrow = 'true';
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css?v=1.1.0">
+  <script src="app.js?v=1.1.0" defer></script>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <h1>Frame Art Studio</h1>
-      <p>Passe-partout, ledbalk-simulatie en dag/avond-export voor Samsung The Frame</p>
+  <header class="ha-toolbar">
+    <div class="toolbar-start">
+      <button id="haMenuBtn" type="button" class="ha-icon-btn" aria-label="Open Home Assistant menu" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"/></svg>
+      </button>
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1,3H23V21H1V3M3,5V19H21V5H3M5,7H19V17H5V7M7,9V15H17V9H7Z"/></svg>
+        <h1>Frame Art Studio</h1>
+      </div>
     </div>
-    <div class="export">
-      <label for="format">Bestandstype</label>
-      <select id="format">
+
+    <div class="export toolbar-actions">
+      <label class="sr-only" for="format">Bestandstype</label>
+      <select id="format" aria-label="Bestandstype voor export" title="Bestandstype">
         <option value="JPEG">JPEG</option>
         <option value="PNG">PNG</option>
       </select>
-      <button id="saveSingle" type="button" class="quiet">Alleen Avond</button>
-      <button id="save" type="button">Download Dag + Avond (4K)</button>
+      <button id="saveSingle" type="button" class="ha-btn ha-btn-tonal quiet">Alleen Avond</button>
+      <button id="save" type="button" class="ha-btn ha-btn-primary" aria-label="Download Dag + Avond (4K)" title="Download Dag + Avond (4K)">
+        <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>
+        <span>Download Dag + Avond</span>
+      </button>
     </div>
   </header>
 
   <main>
     <div class="workspace">
-      <div class="workspace-bar">
-        <div class="profile-switch" role="group" aria-label="Bewerk lichtversie">
-          <button type="button" class="profile-btn" data-profile="day" aria-pressed="false">Dag-versie</button>
-          <button type="button" class="profile-btn" data-profile="evening" aria-pressed="true">Avond-versie</button>
-        </div>
-        <div class="workspace-toggles">
-          <button type="button" id="wallPreview" class="toggle" aria-pressed="true">Wandvoorbeeld</button>
-          <button type="button" id="compareOriginal" class="toggle" aria-pressed="false">Zonder licht</button>
-          <button type="button" id="resetAll" class="quiet">Herstel standaard</button>
-        </div>
-      </div>
+      <section class="ha-card preview-card" aria-label="Voorvertoning">
+        <div class="workspace-bar">
+          <div class="profile-switch" role="group" aria-label="Bewerk lichtversie">
+            <button type="button" class="profile-btn" data-profile="day" aria-pressed="false">
+              <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.77C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"/></svg>
+              <span>Dag</span>
+            </button>
+            <button type="button" class="profile-btn" data-profile="evening" aria-pressed="true">
+              <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95Z"/></svg>
+              <span>Avond</span>
+            </button>
+          </div>
 
-      <div class="stage" id="stage" data-wall="true" data-scene="evening">
-        <div class="wall-alcove">
-          <div class="tv-bezel">
-            <canvas id="preview" width="1920" height="1080" aria-label="Voorvertoning van het kunstwerk met passe-partout en lichtsimulatie"></canvas>
+          <div class="workspace-toggles">
+            <button type="button" id="wallPreview" class="ha-chip toggle" aria-pressed="true">Wandvoorbeeld</button>
+            <button type="button" id="compareOriginal" class="ha-chip toggle" aria-pressed="false">Zonder licht</button>
+            <button type="button" id="resetAll" class="ha-btn ha-btn-text quiet" title="Herstel standaardinstellingen">
+              <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z"/></svg>
+              <span>Herstel</span>
+            </button>
           </div>
         </div>
-        <div class="drop-hint" id="dropHint" aria-hidden="true">Laat los om afbeelding te openen</div>
-      </div>
 
-      <div class="caption">
-        <span id="artName">Voorbeeld</span>
-        <span class="caption-meta">Sleep op beeld om uit te snijden · 3840 × 2160 px</span>
-      </div>
-      <p id="localLibrary" hidden>Open de <a href="http://127.0.0.1:8765/">lokale editor</a> om de projectbestanden direct te kiezen.</p>
-      <p id="status" role="status"></p>
+        <div class="stage" id="stage" data-wall="true" data-scene="evening">
+          <div class="wall-alcove">
+            <div class="tv-bezel">
+              <canvas id="preview" width="1920" height="1080" aria-label="Voorvertoning van het kunstwerk met passe-partout en lichtsimulatie"></canvas>
+            </div>
+          </div>
+          <div class="drop-hint" id="dropHint" aria-hidden="true">Laat los om afbeelding te openen</div>
+        </div>
+
+        <div class="caption">
+          <span id="artName">Voorbeeld</span>
+          <span class="caption-meta">Sleep op beeld om uit te snijden · 3840 × 2160 px</span>
+        </div>
+        <p id="localLibrary" hidden>Open de <a href="http://127.0.0.1:8765/">lokale editor</a> om de projectbestanden direct te kiezen.</p>
+        <p id="status" class="ha-status" role="status"></p>
+      </section>
     </div>
 
     <aside aria-label="Instellingen">
-      <fieldset>
-        <legend>Kunstwerk (gedeeld)</legend>
-        <div class="asset">
-          <label class="file" for="art">Open afbeelding<input id="art" type="file" accept="image/*"></label>
-          <button type="button" id="autoMat" class="quiet">Pas karton aan foto aan</button>
+      <section id="tvControls" class="ha-card tv-card-panel" hidden>
+        <div class="ha-card-header">
+          <svg class="card-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21,17H3V5H21M21,3H3A2,2 0 0,0 1,5V17A2,2 0 0,0 3,19H8V21H16V19H21A2,2 0 0,0 23,17V5A2,2 0 0,0 21,3Z"/></svg>
+          <h2>Samsung The Frame</h2>
         </div>
-        <div class="controls">
-          <div class="select-row">
-            <label for="fitMode">Schaling in uitsnede</label>
-            <select id="fitMode">
-              <option value="cover">Vullend (bijsnijden)</option>
-              <option value="contain">Passend (volledig beeld)</option>
-            </select>
+        <div class="ha-card-content">
+          <form id="tvForm" class="controls">
+            <div id="tvAddressField" class="select-row">
+              <label for="tvAddress">Lokaal IP-adres van de tv</label>
+              <input id="tvAddress" type="text" inputmode="decimal" value="192.168.1.92" required>
+            </div>
+            <div id="tvSelectField" class="select-row" hidden>
+              <label for="tvSelect">Home Assistant tv</label>
+              <select id="tvSelect"></select>
+            </div>
+            <label class="switch-row" for="tvReplacePrevious">
+              <span>Vervang vorige upload(s) op tv</span>
+              <input id="tvReplacePrevious" type="checkbox" role="switch" class="ha-switch" checked>
+            </label>
+            <div class="tv-actions">
+              <button id="sendTvBoth" type="submit" class="ha-btn ha-btn-primary">
+                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z"/></svg>
+                <span>Stuur Dag + Avond naar tv</span>
+              </button>
+              <button id="sendTvSingle" type="button" class="ha-btn ha-btn-tonal quiet">Alleen Avond</button>
+            </div>
+          </form>
+          <div id="tvSlotsCard" class="tv-slots" hidden>
+            <p class="tv-slots-title">Gekoppelde content_id's (automatisering)</p>
+            <div id="tvSlotsList" class="tv-slots-list"></div>
           </div>
-        </div>
-        <div class="controls" id="artControls"></div>
-      </fieldset>
-
-      <fieldset>
-        <legend id="lightLegend">Licht &amp; dimming · Avond-versie</legend>
-        <p class="fieldset-note" id="profileNote">Instellingen hieronder gelden apart voor de Dag- en Avond-versie. Uitsnede en passe-partout blijven exact gelijk.</p>
-
-        <div class="preset-grid" role="group" aria-label="Lichtpresets voor actieve versie">
-          <button type="button" class="preset" data-preset="evening" aria-pressed="false">Avond · Ledbalk</button>
-          <button type="button" class="preset" data-preset="darkRoom" aria-pressed="true">Donkere avond</button>
-          <button type="button" class="preset" data-preset="daylight" aria-pressed="false">Overdag · Zacht</button>
-          <button type="button" class="preset" data-preset="neutral" aria-pressed="false">Uit · Neutraal</button>
-        </div>
-
-        <div class="ramp-card">
-          <div class="ramp-labels">
-            <span id="rampStartLabel">Boven (ledbalk)</span>
-            <span id="dimSummary">Schermlicht ~46%</span>
-            <span id="rampEndLabel">Onder (schaduw)</span>
+          <div class="asset">
+            <button id="openTvGallery" type="button" class="ha-btn ha-btn-outlined quiet">
+              <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22,16V4A2,2 0 0,0 20,2H8A2,2 0 0,0 6,4V16A2,2 0 0,0 8,18H20A2,2 0 0,0 22,16M20,16H8V4H20V16M16,6L12.5,10.5L10.5,8L7,12.5H19L16,6M2,6V20A2,2 0 0,0 4,22H18V20H4V6H2Z"/></svg>
+              <span>Beheer Mijn foto's op tv</span>
+            </button>
           </div>
-          <div class="light-ramp" id="lightRamp" aria-hidden="true"></div>
-          <div class="ramp-hex" id="rampHex"></div>
+          <p id="tvStatus" class="filename" role="status"></p>
         </div>
+      </section>
 
-        <div class="color-pair">
+      <section class="ha-card">
+        <div class="ha-card-header">
+          <svg class="card-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M13.96,12.29L11.21,15.83L9.25,13.47L6.5,17H17.5L13.96,12.29Z"/></svg>
+          <h2>Kunstwerk</h2>
+          <span class="ha-card-badge">Gedeeld</span>
+        </div>
+        <div class="ha-card-content">
+          <div class="asset">
+            <label class="file ha-btn ha-btn-tonal" for="art">Open afbeelding<input id="art" type="file" accept="image/*"></label>
+            <button type="button" id="autoMat" class="ha-btn ha-btn-outlined quiet">Pas karton aan foto aan</button>
+          </div>
+          <div class="controls">
+            <div class="select-row">
+              <label for="fitMode">Schaling in uitsnede</label>
+              <select id="fitMode">
+                <option value="cover">Vullend (bijsnijden)</option>
+                <option value="contain">Passend (volledig beeld)</option>
+              </select>
+            </div>
+          </div>
+          <div class="controls" id="artControls"></div>
+        </div>
+      </section>
+
+      <section class="ha-card">
+        <div class="ha-card-header">
+          <svg class="card-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12,6A6,6 0 0,1 18,12C18,14.22 16.79,16.16 15,17.2V19A1,1 0 0,1 14,20H10A1,1 0 0,1 9,19V17.2C7.21,16.16 6,14.22 6,12A6,6 0 0,1 12,6M14,21V22A1,1 0 0,1 13,23H11A1,1 0 0,1 10,22V21H14M20,11H23V13H20V11M1,11H4V13H1V11M13,1V4H11V1H13M4.92,3.5L7.05,5.64L5.63,7.05L3.5,4.93L4.92,3.5M16.95,5.63L19.07,3.5L20.5,4.93L18.37,7.05L16.95,5.63Z"/></svg>
+          <h2 id="lightLegend">Licht &amp; dimming · Avond-versie</h2>
+        </div>
+        <div class="ha-card-content">
+          <p class="fieldset-note" id="profileNote">Instellingen hieronder gelden apart voor de Dag- en Avond-versie. Uitsnede en passe-partout blijven exact gelijk.</p>
+
+          <div class="preset-grid" role="group" aria-label="Lichtpresets voor actieve versie">
+            <button type="button" class="ha-chip preset" data-preset="evening" aria-pressed="false">Avond · Ledbalk</button>
+            <button type="button" class="ha-chip preset" data-preset="darkRoom" aria-pressed="true">Donkere avond</button>
+            <button type="button" class="ha-chip preset" data-preset="daylight" aria-pressed="false">Overdag · Zacht</button>
+            <button type="button" class="ha-chip preset" data-preset="neutral" aria-pressed="false">Uit · Neutraal</button>
+          </div>
+
+          <div class="ramp-card">
+            <div class="ramp-labels">
+              <span id="rampStartLabel">Boven (ledbalk)</span>
+              <span id="dimSummary">Schermlicht ~46%</span>
+              <span id="rampEndLabel">Onder (schaduw)</span>
+            </div>
+            <div class="light-ramp" id="lightRamp" aria-hidden="true"></div>
+            <div class="ramp-hex" id="rampHex"></div>
+          </div>
+
+          <div class="color-pair">
+            <div class="color">
+              <label for="ledColor" id="ledColorLabel">Lichtkleur (boven)</label>
+              <input id="ledColor" type="color" value="#fff1be">
+            </div>
+            <div class="color">
+              <label for="shadowColor" id="shadowColorLabel">Kleur donkere deel (onder)</label>
+              <input id="shadowColor" type="color" value="#66521e">
+            </div>
+          </div>
+          <div class="controls" id="ledControls"></div>
+        </div>
+      </section>
+
+      <details class="ha-card ha-expander">
+        <summary class="ha-card-header">
+          <svg class="card-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3,3V21H21V3H3M5,5H19V19H5V5Z"/></svg>
+          <span class="expander-title">Passe-partout</span>
+          <span id="matSummary" class="ha-card-badge">Gedeeld</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+        </summary>
+        <div class="ha-card-content">
           <div class="color">
-            <label for="ledColor" id="ledColorLabel">Lichtkleur (boven)</label>
-            <input id="ledColor" type="color" value="#fff1be">
+            <label for="matColor">Kartonkleur</label>
+            <input id="matColor" type="color" value="#f8f6f0">
           </div>
-          <div class="color">
-            <label for="shadowColor" id="shadowColorLabel">Kleur donkere deel (onder)</label>
-            <input id="shadowColor" type="color" value="#66521e">
+          <div class="controls" id="matControls"></div>
+          <div class="asset">
+            <label class="file ha-btn ha-btn-outlined" for="textureFolder">Kies textuurmap<input id="textureFolder" type="file" webkitdirectory></label>
           </div>
+          <div class="controls" id="textureLibrary" hidden>
+            <label for="texturePreset">Papiertextuur uit map</label>
+            <select id="texturePreset"></select>
+          </div>
+          <div class="asset">
+            <label class="file ha-btn ha-btn-outlined" for="texture">Open kartontextuur<input id="texture" type="file" accept="image/*"></label>
+            <button type="button" id="clearTexture" class="ha-btn ha-btn-text quiet" aria-label="Verwijder kartontextuur" hidden>Verwijder</button>
+          </div>
+          <p id="textureName" class="filename">Ingebouwde papierkorrel</p>
+          <div class="controls" id="textureControls"></div>
         </div>
-        <div class="controls" id="ledControls"></div>
-      </fieldset>
+      </details>
 
-      <fieldset>
-        <legend>Passe-partout (gedeeld)</legend>
-        <div class="color">
-          <label for="matColor">Kartonkleur</label>
-          <input id="matColor" type="color" value="#f8f6f0">
-        </div>
-        <div class="controls" id="matControls"></div>
-        <div class="asset">
-          <label class="file" for="textureFolder">Kies textuurmap<input id="textureFolder" type="file" webkitdirectory></label>
-        </div>
-        <div class="controls" id="textureLibrary" hidden>
-          <label for="texturePreset">Papiertextuur uit map</label>
-          <select id="texturePreset"></select>
-        </div>
-        <div class="asset">
-          <label class="file" for="texture">Open kartontextuur<input id="texture" type="file" accept="image/*"></label>
-          <button type="button" id="clearTexture" class="quiet" aria-label="Verwijder kartontextuur" hidden>Verwijder</button>
-        </div>
-        <p id="textureName" class="filename">Ingebouwde papierkorrel</p>
-        <div class="controls" id="textureControls"></div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Binnensnede &amp; extra overlay</legend>
-        <div class="controls" id="lightControls"></div>
-        <div class="asset">
-          <label class="file" for="shadowFolder">Kies overlaymap<input id="shadowFolder" type="file" webkitdirectory></label>
-        </div>
-        <div class="controls" id="shadowLibrary" hidden>
-          <label for="shadowPreset">Extra schaduwoverlay</label>
-          <select id="shadowPreset"></select>
-        </div>
-        <div class="asset">
-          <label class="file" for="shadow">Open schaduwoverlay<input id="shadow" type="file" accept="image/*"></label>
-          <button type="button" id="clearShadow" class="quiet" aria-label="Verwijder schaduwoverlay" hidden>Verwijder</button>
-        </div>
-        <p id="shadowName" class="filename">Geen extra overlay</p>
-        <div class="controls" id="shadowControls"></div>
-      </fieldset>
-
-      <fieldset id="tvControls" hidden>
-        <legend>Samsung The Frame</legend>
-        <form id="tvForm" class="controls">
-          <div id="tvAddressField" class="select-row">
-            <label for="tvAddress">Lokaal IP-adres van de tv</label>
-            <input id="tvAddress" type="text" inputmode="decimal" value="192.168.1.92" required>
+      <details class="ha-card ha-expander">
+        <summary class="ha-card-header">
+          <svg class="card-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12,16L19.36,10.27L21,9L12,2L3,9L4.63,10.27M12,18.54L4.62,12.81L3,14.07L12,21.07L21,14.07L19.37,12.8L12,18.54Z"/></svg>
+          <span class="expander-title">Binnensnede &amp; extra overlay</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+        </summary>
+        <div class="ha-card-content">
+          <div class="controls" id="lightControls"></div>
+          <div class="asset">
+            <label class="file ha-btn ha-btn-outlined" for="shadowFolder">Kies overlaymap<input id="shadowFolder" type="file" webkitdirectory></label>
           </div>
-          <div id="tvSelectField" class="select-row" hidden>
-            <label for="tvSelect">Home Assistant tv</label>
-            <select id="tvSelect"></select>
+          <div class="controls" id="shadowLibrary" hidden>
+            <label for="shadowPreset">Extra schaduwoverlay</label>
+            <select id="shadowPreset"></select>
           </div>
-          <div class="checkbox-row">
-            <input id="tvReplacePrevious" type="checkbox" checked>
-            <label for="tvReplacePrevious">Vervang vorige upload(s) op tv</label>
+          <div class="asset">
+            <label class="file ha-btn ha-btn-outlined" for="shadow">Open schaduwoverlay<input id="shadow" type="file" accept="image/*"></label>
+            <button type="button" id="clearShadow" class="ha-btn ha-btn-text quiet" aria-label="Verwijder schaduwoverlay" hidden>Verwijder</button>
           </div>
-          <div class="tv-actions">
-            <button id="sendTvBoth" type="submit">Stuur Dag + Avond naar tv</button>
-            <button id="sendTvSingle" type="button" class="quiet">Alleen Avond</button>
-          </div>
-        </form>
-        <div id="tvSlotsCard" class="tv-slots" hidden>
-          <p class="tv-slots-title">Laatste content_id's (automatisering)</p>
-          <div id="tvSlotsList" class="tv-slots-list"></div>
+          <p id="shadowName" class="filename">Geen extra overlay</p>
+          <div class="controls" id="shadowControls"></div>
         </div>
-        <div class="asset">
-          <button id="openTvGallery" type="button" class="quiet">Beheer Mijn foto's op tv</button>
-        </div>
-        <p id="tvStatus" class="filename" role="status"></p>
-      </fieldset>
+      </details>
     </aside>
   </main>
 
   <dialog id="tvGalleryDialog" closedby="any" aria-labelledby="tvGalleryTitle">
     <div class="dialog-header">
-      <div>
-        <h1 id="tvGalleryTitle">Mijn foto's op Samsung The Frame</h1>
+      <div class="dialog-title-wrap">
+        <h2 id="tvGalleryTitle">Mijn foto's op Samsung The Frame</h2>
         <p id="tvGalleryStatus" class="dialog-subtitle" role="status">Klaar om lijst op te halen.</p>
       </div>
       <div class="dialog-header-actions">
-        <button id="refreshTvGallery" type="button" class="quiet">Vernieuw</button>
+        <button id="refreshTvGallery" type="button" class="ha-icon-btn" aria-label="Vernieuw lijst" title="Vernieuw">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/></svg>
+        </button>
         <form method="dialog">
-          <button type="submit" autofocus>Sluiten</button>
+          <button type="submit" class="ha-icon-btn" aria-label="Sluiten" title="Sluiten" autofocus>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg>
+          </button>
         </form>
       </div>
     </div>
 
     <div class="dialog-toolbar">
       <div class="dialog-toolbar-group">
-        <button id="selectOldTvArt" type="button" class="quiet">Selecteer oude</button>
-        <button id="clearTvSelection" type="button" class="quiet">Deselecteer alles</button>
+        <button id="selectOldTvArt" type="button" class="ha-btn ha-btn-outlined quiet">Selecteer oude</button>
+        <button id="clearTvSelection" type="button" class="ha-btn ha-btn-text quiet">Deselecteer alles</button>
       </div>
-      <button id="deleteSelectedTvArt" type="button" class="danger" disabled>Verwijder geselecteerde (0)</button>
+      <button id="deleteSelectedTvArt" type="button" class="ha-btn danger" disabled>Verwijder geselecteerde (0)</button>
     </div>
 
     <div id="tvGalleryBody" class="dialog-body">

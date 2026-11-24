@@ -2,50 +2,155 @@
 
 @layer theme {
   :root {
-    color-scheme: dark;
-    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-serif: Georgia, "Times New Roman", serif;
-    --bg-page: #181d1b;
-    --bg-surface: #222926;
-    --bg-control: #2d3631;
-    --bg-control-hover: #36413b;
-    --bg-stage: #111513;
-    --border-subtle: #47524b;
-    --border-strong: #6e7b70;
-    --text-primary: #f4efe6;
-    --text-muted: #c2cbc0;
-    --accent: #cad7a6;
-    --accent-hover: #dce6be;
-    --accent-ink: #161f12;
-    --focus-ring: #e7efc8;
-    --radius-sm: 0.4rem;
-    --radius-md: 0.65rem;
-    --slider-track-size: 0.375rem;
-    --slider-thumb-size: 1.1rem;
-    --slider-track-color: #4f5b53;
+    color-scheme: light dark;
+
+    /* Default Home Assistant Dark fallback tokens (overridden live by panel.js in HA) */
+    --_ha-bg-light: #fafafa;
+    --_ha-bg-dark: #111111;
+    --_ha-surface-light: #ffffff;
+    --_ha-surface-dark: #1c1c1c;
+    --_ha-secondary-bg-light: #e5e5e5;
+    --_ha-secondary-bg-dark: #282828;
+    --_ha-header-bg-light: #03a9f4;
+    --_ha-header-bg-dark: #101e24;
+    --_ha-header-fg-light: #ffffff;
+    --_ha-header-fg-dark: #e1e1e1;
+    --_ha-text-light: #212121;
+    --_ha-text-dark: #e1e1e1;
+    --_ha-muted-light: #727272;
+    --_ha-muted-dark: #9b9b9b;
+    --_ha-divider-light: rgba(0, 0, 0, 0.12);
+    --_ha-divider-dark: rgba(225, 225, 225, 0.12);
+    --_ha-outline-light: rgba(0, 0, 0, 0.24);
+    --_ha-outline-dark: rgba(225, 225, 225, 0.22);
+    --_ha-input-bg-light: rgba(0, 0, 0, 0.04);
+    --_ha-input-bg-dark: rgba(255, 255, 255, 0.06);
+    --_ha-stage-light: #efefef;
+    --_ha-stage-dark: #0c0c0c;
+    --_ha-switch-track-light: rgba(0, 0, 0, 0.26);
+    --_ha-switch-track-dark: rgba(255, 255, 255, 0.26);
+
+    /* Fallback resolution for browsers without light-dark() */
+    --_fallback-bg: var(--_ha-bg-dark);
+    --_fallback-surface: var(--_ha-surface-dark);
+    --_fallback-secondary-bg: var(--_ha-secondary-bg-dark);
+    --_fallback-header-bg: var(--_ha-header-bg-dark);
+    --_fallback-header-fg: var(--_ha-header-fg-dark);
+    --_fallback-text: var(--_ha-text-dark);
+    --_fallback-muted: var(--_ha-muted-dark);
+    --_fallback-divider: var(--_ha-divider-dark);
+    --_fallback-outline: var(--_ha-outline-dark);
+    --_fallback-input-bg: var(--_ha-input-bg-dark);
+    --_fallback-stage: var(--_ha-stage-dark);
+    --_fallback-switch-track: var(--_ha-switch-track-dark);
+    --_fallback-card-shadow: none;
+
+    /* Semantic UI tokens wired directly to live Home Assistant CSS variables */
+    --font-sans: var(--ha-font-family-body, var(--paper-font-body1_-_font-family, Roboto, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif));
+    --bg-page: var(--primary-background-color, var(--_fallback-bg));
+    --bg-surface: var(--ha-card-background, var(--card-background-color, var(--_fallback-surface)));
+    --bg-subtle: var(--secondary-background-color, var(--_fallback-secondary-bg));
+    --bg-control: var(--input-fill-color, var(--_fallback-input-bg));
+    --bg-stage: var(--_fallback-stage);
+
+    --toolbar-bg: var(--app-header-background-color, var(--_fallback-header-bg));
+    --toolbar-fg: var(--app-header-text-color, var(--_fallback-header-fg));
+    --header-h: var(--header-height, 56px);
+
+    --border-subtle: var(--ha-card-border-color, var(--divider-color, var(--_fallback-divider)));
+    --border-strong: var(--outline-color, var(--input-outlined-idle-border-color, var(--_fallback-outline)));
+    --card-radius: var(--ha-card-border-radius, 12px);
+    --card-border-w: var(--ha-card-border-width, 1px);
+    --card-shadow: var(--ha-card-box-shadow, var(--_fallback-card-shadow));
+
+    --text-primary: var(--primary-text-color, var(--_fallback-text));
+    --text-muted: var(--secondary-text-color, var(--_fallback-muted));
+    --accent: var(--primary-color, var(--mdc-theme-primary, #03a9f4));
+    --accent-hover: var(--dark-primary-color, color-mix(in oklab, var(--accent) 88%, black));
+    --accent-text: var(--light-primary-color, var(--accent));
+    --accent-ink: var(--text-primary-color, #ffffff);
+    --focus-ring: var(--accent);
+
+    --danger-color: var(--error-color, #db4437);
+    --success-color-ui: var(--success-color, #43a047);
+    --warning-color-ui: var(--warning-color, #ffa600);
+
+    --radius-sm: 8px;
+    --radius-pill: 999px;
+    --slider-track-size: 4px;
+    --slider-thumb-size: 16px;
+    --slider-track-color: var(--divider-color, var(--_fallback-divider));
     --slider-fill-color: var(--accent);
-    --slider-thumb-color: #f4efe6;
+    --slider-thumb-color: var(--accent);
+
+    --scrollbar-thumb: var(--scrollbar-thumb-color, var(--_fallback-outline));
+    scrollbar-color: var(--scrollbar-thumb) transparent;
     accent-color: var(--accent);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-ha-theme="dark"]) {
+      --_fallback-bg: var(--_ha-bg-light);
+      --_fallback-surface: var(--_ha-surface-light);
+      --_fallback-secondary-bg: var(--_ha-secondary-bg-light);
+      --_fallback-header-bg: var(--_ha-header-bg-light);
+      --_fallback-header-fg: var(--_ha-header-fg-light);
+      --_fallback-text: var(--_ha-text-light);
+      --_fallback-muted: var(--_ha-muted-light);
+      --_fallback-divider: var(--_ha-divider-light);
+      --_fallback-outline: var(--_ha-outline-light);
+      --_fallback-input-bg: var(--_ha-input-bg-light);
+      --_fallback-stage: var(--_ha-stage-light);
+      --_fallback-switch-track: var(--_ha-switch-track-light);
+      --_fallback-card-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+      --accent-text: var(--dark-primary-color, #0277bd);
+    }
+  }
+
+  :root[data-ha-theme="light"] {
+    color-scheme: light;
+    --_fallback-bg: var(--_ha-bg-light);
+    --_fallback-surface: var(--_ha-surface-light);
+    --_fallback-secondary-bg: var(--_ha-secondary-bg-light);
+    --_fallback-header-bg: var(--_ha-header-bg-light);
+    --_fallback-header-fg: var(--_ha-header-fg-light);
+    --_fallback-text: var(--_ha-text-light);
+    --_fallback-muted: var(--_ha-muted-light);
+    --_fallback-divider: var(--_ha-divider-light);
+    --_fallback-outline: var(--_ha-outline-light);
+    --_fallback-input-bg: var(--_ha-input-bg-light);
+    --_fallback-stage: var(--_ha-stage-light);
+    --_fallback-switch-track: var(--_ha-switch-track-light);
+    --_fallback-card-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    --accent-text: var(--dark-primary-color, #0277bd);
+  }
+
+  :root[data-ha-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  @supports (color: light-dark(white, black)) {
+    :root {
+      --_fallback-bg: light-dark(var(--_ha-bg-light), var(--_ha-bg-dark));
+      --_fallback-surface: light-dark(var(--_ha-surface-light), var(--_ha-surface-dark));
+      --_fallback-secondary-bg: light-dark(var(--_ha-secondary-bg-light), var(--_ha-secondary-bg-dark));
+      --_fallback-header-bg: light-dark(var(--_ha-header-bg-light), var(--_ha-header-bg-dark));
+      --_fallback-header-fg: light-dark(var(--_ha-header-fg-light), var(--_ha-header-fg-dark));
+      --_fallback-text: light-dark(var(--_ha-text-light), var(--_ha-text-dark));
+      --_fallback-muted: light-dark(var(--_ha-muted-light), var(--_ha-muted-dark));
+      --_fallback-divider: light-dark(var(--_ha-divider-light), var(--_ha-divider-dark));
+      --_fallback-outline: light-dark(var(--_ha-outline-light), var(--_ha-outline-dark));
+      --_fallback-input-bg: light-dark(var(--_ha-input-bg-light), var(--_ha-input-bg-dark));
+      --_fallback-stage: light-dark(var(--_ha-stage-light), var(--_ha-stage-dark));
+      --_fallback-switch-track: light-dark(var(--_ha-switch-track-light), var(--_ha-switch-track-dark));
+    }
   }
 }
 
 @layer reset {
-  html,
-  body,
-  header,
-  main,
-  aside,
-  div,
-  dialog,
-  fieldset,
-  legend,
-  form,
-  label,
-  input,
-  select,
-  button,
-  canvas,
-  p {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -59,20 +164,21 @@
     font-family: var(--font-sans);
     background: var(--bg-page);
     color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
   }
 
   body {
-    margin-inline: auto;
-    max-inline-size: 1680px;
-    line-height: 1.4;
+    min-block-size: 100dvh;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    line-height: 1.45;
   }
 
-  h1 {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: clamp(1.75rem, 3.2vw, 2.55rem);
-    line-height: 1.1;
+  h1,
+  h2 {
     margin: 0;
+    font-weight: 500;
   }
 
   a {
@@ -86,23 +192,264 @@
 }
 
 @layer components {
-  header {
+  .sr-only {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Home Assistant 56px Top App Bar */
+  .ha-toolbar {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 10;
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
     align-items: center;
     justify-content: space-between;
-    padding-block: 1.35rem;
-    padding-inline: clamp(1rem, 3.5vw, 3.5rem);
+    gap: 0.75rem;
+    min-block-size: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+    padding-block: env(safe-area-inset-top, 0px) 0;
+    padding-inline: 1rem;
+    background: var(--toolbar-bg);
+    color: var(--toolbar-fg);
     border-block-end: 1px solid var(--border-subtle);
   }
 
-  .brand p {
-    margin-block: 0.35rem 0;
-    color: var(--text-muted);
-    font-size: 0.95rem;
+  .toolbar-start {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-inline-size: 0;
+    padding-block: 0.35rem;
   }
 
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-inline-size: 0;
+  }
+
+  .brand-icon {
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
+    fill: currentColor;
+    opacity: 0.9;
+    flex-shrink: 0;
+  }
+
+  .ha-toolbar h1 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toolbar-actions {
+    padding-block: 0.4rem;
+  }
+
+  .ha-toolbar select {
+    background: color-mix(in srgb, var(--toolbar-fg) 10%, transparent);
+    color: var(--toolbar-fg);
+    border-color: color-mix(in srgb, var(--toolbar-fg) 26%, transparent);
+    min-block-size: 2.15rem;
+    padding-block: 0.25rem;
+  }
+
+  .ha-toolbar select option {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+  }
+
+  .ha-toolbar .ha-btn-tonal {
+    background: color-mix(in srgb, var(--toolbar-fg) 12%, transparent);
+    color: var(--toolbar-fg);
+    border-color: transparent;
+  }
+
+  .ha-toolbar .ha-btn-tonal:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--toolbar-fg) 20%, transparent);
+  }
+
+  /* Ensure primary download button stands out against HA Light Mode blue app bar */
+  :root[data-ha-theme="light"] .ha-toolbar #save {
+    background: #ffffff;
+    color: var(--dark-primary-color, #0277bd);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+  }
+
+  :root[data-ha-theme="light"] .ha-toolbar #save:hover:not(:disabled) {
+    background: #f2f8fc;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-ha-theme="dark"]) .ha-toolbar #save {
+      background: #ffffff;
+      color: var(--dark-primary-color, #0277bd);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+    }
+  }
+
+  /* HA Icon Buttons */
+  .ha-icon-btn {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    min-block-size: 2.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 140ms ease;
+  }
+
+  .ha-icon-btn svg {
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
+    fill: currentColor;
+  }
+
+  .ha-icon-btn:hover:not(:disabled) {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+  }
+
+  .btn-icon {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* Layout Container */
+  main {
+    margin-inline: auto;
+    max-inline-size: 1680px;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 25rem);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .workspace {
+    position: sticky;
+    inset-block-start: calc(var(--header-h) + 1rem);
+    min-inline-size: 0;
+  }
+
+  aside {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-inline-size: 0;
+  }
+
+  /* In Home Assistant mode keep TV card first; locally keep Kunstwerk first */
+  html:not(.is-ha-mode) .tv-card-panel {
+    order: 10;
+  }
+
+  /* Native Home Assistant Card */
+  .ha-card {
+    background: var(--bg-surface);
+    border: var(--card-border-w) solid var(--border-subtle);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  .preview-card {
+    padding: 1rem;
+  }
+
+  .ha-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.9rem 1rem 0.75rem;
+    color: var(--text-primary);
+  }
+
+  .ha-card-header h2,
+  .expander-title {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.3;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .card-icon {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    fill: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .ha-card-badge {
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .ha-card-content {
+    padding: 0 1rem 1rem;
+  }
+
+  /* Expandable HA Cards (<details>) */
+  .ha-expander > summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    padding-block: 0.85rem;
+    transition: background-color 140ms ease;
+  }
+
+  .ha-expander > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ha-expander > summary:hover {
+    background: color-mix(in srgb, var(--text-primary) 5%, transparent);
+  }
+
+  .ha-expander[open] > summary {
+    border-block-end: 1px solid var(--border-subtle);
+    margin-block-end: 0.85rem;
+  }
+
+  .chevron-icon {
+    inline-size: 1.3rem;
+    block-size: 1.3rem;
+    fill: var(--text-muted);
+    transition: transform 180ms ease;
+    flex-shrink: 0;
+  }
+
+  .ha-expander[open] .chevron-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Flex groups */
   .export,
   .asset,
   .color,
@@ -114,7 +461,7 @@
   .tv-actions {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
   .export,
@@ -126,79 +473,186 @@
 
   .workspace-bar {
     justify-content: space-between;
-    margin-block-end: 0.75rem;
+    margin-block-end: 0.85rem;
   }
 
+  /* Segmented Dag / Avond Control */
   .profile-switch {
-    gap: 0.25rem;
+    gap: 0.2rem;
     padding: 0.2rem;
-    background: var(--bg-surface);
+    background: color-mix(in srgb, var(--text-primary) 6%, var(--bg-page));
     border: 1px solid var(--border-subtle);
-    border-radius: calc(var(--radius-sm) + 0.15rem);
+    border-radius: var(--radius-pill);
   }
 
   .profile-btn {
-    border-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 0;
+    border-radius: var(--radius-pill);
     background: transparent;
+    color: var(--text-muted);
     min-block-size: 2rem;
-    padding-block: 0.35rem;
-    padding-inline: 0.85rem;
-    font-weight: 550;
+    padding-block: 0.3rem;
+    padding-inline: 0.9rem;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 140ms ease, color 140ms ease;
+  }
+
+  .profile-btn:hover:not(:disabled):not([aria-pressed="true"]) {
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
   }
 
   .profile-btn[aria-pressed="true"] {
     background: var(--accent);
     color: var(--accent-ink);
-    border-color: transparent;
   }
 
-  .profile-btn[aria-pressed="true"]:hover:not(:disabled) {
-    background: var(--accent-hover);
-    border-color: transparent;
-  }
-
+  /* HA Buttons & Chips */
   button,
   select,
   .file {
     font: inherit;
-    font-size: 0.9rem;
-    min-block-size: 2.35rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    min-block-size: 2.25rem;
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
     background: var(--bg-control);
-    color: inherit;
-    padding-block: 0.45rem;
-    padding-inline: 0.75rem;
+    color: var(--text-primary);
+    padding-block: 0.35rem;
+    padding-inline: 0.8rem;
     cursor: pointer;
-    transition: border-color 140ms ease, background-color 140ms ease;
+    transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
   }
 
-  button:disabled,
-  input:disabled,
-  select:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
+  .ha-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border-radius: var(--radius-pill);
+    padding-inline: 0.95rem;
   }
 
-  button:hover:not(:disabled),
-  select:hover:not(:disabled),
-  .file:hover {
-    border-color: var(--focus-ring);
-    background: var(--bg-control-hover);
-  }
-
+  .ha-btn-primary,
   #save,
   #sendTvBoth {
     background: var(--accent);
     color: var(--accent-ink);
     border-color: transparent;
-    font-weight: 650;
-    padding-inline: 1.05rem;
+    font-weight: 500;
   }
 
+  /* Dynamic readable text contrast on custom HA themes */
+  @supports (color: color(from red xyz-d65 1 1 1)) {
+    .ha-btn-primary,
+    #save,
+    #sendTvBoth,
+    .profile-btn[aria-pressed="true"],
+    .tv-badge.is-accent {
+      --_wcag-y: max(0, sign(0.17913 - y));
+      color: color(from var(--accent) xyz-d65 calc(var(--_wcag-y) * 0.9505) var(--_wcag-y) calc(var(--_wcag-y) * 1.089));
+    }
+  }
+
+  @supports (color: contrast-color(red)) {
+    .ha-btn-primary,
+    #save,
+    #sendTvBoth,
+    .profile-btn[aria-pressed="true"],
+    .tv-badge.is-accent {
+      color: contrast-color(var(--accent));
+    }
+  }
+
+  .ha-btn-primary:hover:not(:disabled),
   #save:hover:not(:disabled),
   #sendTvBoth:hover:not(:disabled) {
     background: var(--accent-hover);
+    border-color: transparent;
+  }
+
+  .ha-btn-tonal {
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--accent-text);
+    border-color: transparent;
+  }
+
+  .ha-btn-tonal:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--accent) 24%, transparent);
+    border-color: transparent;
+  }
+
+  .ha-btn-outlined {
+    background: transparent;
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+
+  .ha-btn-outlined:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--text-primary) 7%, transparent);
+    border-color: var(--text-muted);
+  }
+
+  .ha-btn-text {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-muted);
+    padding-inline: 0.65rem;
+  }
+
+  .ha-btn-text:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    border-color: transparent;
+  }
+
+  .ha-chip {
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    min-block-size: 2rem;
+    padding-block: 0.25rem;
+    padding-inline: 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  .ha-chip:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+    border-color: var(--border-strong);
+  }
+
+  .toggle[aria-pressed="true"],
+  .preset[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    border-color: var(--accent);
+    color: var(--text-primary);
+  }
+
+  button:disabled,
+  input:disabled,
+  select:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+  }
+
+  select {
+    appearance: auto;
+    font-weight: 400;
+    background: var(--bg-control);
+    border-color: var(--border-subtle);
+  }
+
+  select:hover:not(:disabled) {
+    border-color: var(--border-strong);
   }
 
   .tv-actions {
@@ -209,34 +663,13 @@
     flex: 1 1 auto;
   }
 
-  .toggle[aria-pressed="true"],
-  .preset[aria-pressed="true"] {
-    background: color-mix(in oklab, var(--accent) 22%, var(--bg-control));
-    border-color: var(--accent);
-    color: var(--text-primary);
-  }
-
-  main {
-    padding-block: clamp(1rem, 3vw, 2.5rem);
-    padding-inline: clamp(1rem, 3.5vw, 3.5rem);
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(19rem, 24.5rem);
-    gap: clamp(1rem, 3vw, 3rem);
-    align-items: start;
-  }
-
-  .workspace {
-    position: sticky;
-    inset-block-start: 1rem;
-    min-inline-size: 0;
-  }
-
+  /* Preview Stage */
   .stage {
     position: relative;
     background: var(--bg-stage);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: clamp(0.6rem, 2vw, 1.5rem);
+    border-radius: calc(var(--card-radius) - 2px);
+    padding: clamp(0.6rem, 2vw, 1.4rem);
     overflow: hidden;
     transition: border-color 150ms ease;
   }
@@ -250,11 +683,10 @@
     inset: 0;
     display: grid;
     place-items: center;
-    background: rgba(17, 21, 19, 0.84);
+    background: rgba(17, 17, 17, 0.82);
     color: var(--accent);
-    font-weight: 600;
-    font-size: 1.05rem;
-    letter-spacing: 0.01em;
+    font-weight: 500;
+    font-size: 1rem;
     opacity: 0;
     pointer-events: none;
     transition: opacity 150ms ease;
@@ -266,7 +698,7 @@
 
   .wall-alcove {
     position: relative;
-    border-radius: 0.35rem;
+    border-radius: 6px;
     transition: padding 180ms ease, background 180ms ease, box-shadow 180ms ease;
   }
 
@@ -277,11 +709,11 @@
   }
 
   .stage[data-wall="true"] .wall-alcove {
-    padding-block: clamp(1.3rem, 3.2vw, 2.75rem);
-    padding-inline: clamp(1.4rem, 4.2vw, 3.75rem);
+    padding-block: clamp(1.2rem, 3vw, 2.5rem);
+    padding-inline: clamp(1.3rem, 4vw, 3.5rem);
     border: 10px solid #29382e;
     border-block-start-width: 14px;
-    border-radius: var(--radius-md);
+    border-radius: calc(var(--card-radius) - 2px);
     background-image:
       linear-gradient(
         to bottom,
@@ -340,7 +772,7 @@
     block-size: auto;
     cursor: grab;
     touch-action: none;
-    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.45);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   }
 
   canvas.is-dragging {
@@ -354,7 +786,6 @@
   }
 
   .caption,
-  #status,
   .filename,
   output,
   .ramp-labels,
@@ -364,50 +795,39 @@
   }
 
   .fieldset-note {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     margin-block: 0 0.75rem;
-    line-height: 1.38;
-  }
-
-  .caption,
-  #status {
-    margin-block-start: 0.7rem;
+    line-height: 1.4;
   }
 
   .caption {
-    font-size: 0.9rem;
+    margin-block-start: 0.75rem;
+    font-size: 0.84rem;
     flex-wrap: wrap;
   }
 
   .caption-meta {
     flex-shrink: 0;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  .ha-status:not(:empty) {
+    margin: 0.75rem 0 0;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-inline-start: 3px solid var(--accent);
+    color: var(--text-primary);
+    font-size: 0.84rem;
+  }
+
+  .ha-status:empty {
+    margin: 0;
   }
 
   #artName,
   .filename {
     overflow-wrap: anywhere;
-  }
-
-  aside {
-    display: grid;
-    gap: 1.05rem;
-  }
-
-  fieldset {
-    min-inline-size: 0;
-    margin: 0;
-    padding-block: 0.85rem 1rem;
-    padding-inline: 1rem;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-  }
-
-  legend {
-    padding-inline: 0.45rem;
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
   }
 
   .preset-grid {
@@ -418,17 +838,17 @@
   }
 
   .preset {
-    font-size: 0.84rem;
-    padding-inline: 0.55rem;
+    font-size: 0.82rem;
+    padding-inline: 0.5rem;
     text-align: center;
   }
 
   .ramp-card {
     margin-block-end: 0.85rem;
-    padding: 0.55rem 0.65rem;
+    padding: 0.6rem 0.75rem;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm);
-    background: var(--bg-stage);
+    background: color-mix(in srgb, var(--text-primary) 3%, var(--bg-page));
   }
 
   .ramp-labels,
@@ -436,15 +856,15 @@
     display: flex;
     justify-content: space-between;
     gap: 0.35rem;
-    font-size: 0.75rem;
+    font-size: 0.74rem;
     font-variant-numeric: tabular-nums;
   }
 
   .light-ramp {
-    block-size: 1.15rem;
-    margin-block: 0.35rem;
-    border-radius: 0.25rem;
-    border: 1px solid var(--border-strong);
+    block-size: 1rem;
+    margin-block: 0.4rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-subtle);
     forced-color-adjust: none;
   }
 
@@ -455,33 +875,33 @@
 
   .controls {
     display: grid;
-    gap: 0.55rem;
+    gap: 0.65rem;
   }
 
   .controls:not(:empty) {
-    margin-block-start: 0.7rem;
+    margin-block-start: 0.75rem;
   }
 
   .select-row {
     display: grid;
-    gap: 0.35rem;
+    gap: 0.3rem;
   }
 
   .range-label,
   .color label,
-  .export label,
   .select-row label {
-    font-size: 0.88rem;
+    font-size: 0.84rem;
+    color: var(--text-primary);
   }
 
   output {
     font-variant-numeric: tabular-nums;
-    font-size: 0.86rem;
+    font-size: 0.82rem;
   }
 
   input[type="color"] {
-    inline-size: 2.6rem;
-    block-size: 2rem;
+    inline-size: 2.5rem;
+    block-size: 1.9rem;
     padding: 0.15rem;
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
@@ -490,7 +910,7 @@
     forced-color-adjust: none;
   }
 
-  /* Native range slider styled cross-browser with separated vendor pseudo-elements */
+  /* HA Material-style Native Range Slider */
   input[type="range"] {
     --slider-direction: to right;
     --attr-min: attr(min type(<number>), 0);
@@ -503,7 +923,7 @@
     appearance: none;
     display: block;
     inline-size: 100%;
-    block-size: 1.75rem;
+    block-size: 1.6rem;
     margin: 0.15rem 0 0;
     padding: 0;
     border: 0;
@@ -541,9 +961,15 @@
     inline-size: var(--slider-thumb-size);
     block-size: var(--slider-thumb-size);
     margin-block-start: calc((var(--slider-track-size) - var(--slider-thumb-size)) / 2);
-    border: 2px solid var(--bg-page);
+    border: 0;
     border-radius: 50%;
     background: var(--slider-thumb-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+
+  input[type="range"]:hover::-webkit-slider-thumb {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 18%, transparent);
   }
 
   input[type="range"]::-moz-range-track {
@@ -562,27 +988,81 @@
   input[type="range"]::-moz-range-thumb {
     inline-size: var(--slider-thumb-size);
     block-size: var(--slider-thumb-size);
-    border: 2px solid var(--bg-page);
+    border: 0;
     border-radius: 50%;
     background: var(--slider-thumb-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
   }
 
   input[type="range"]:focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
-    border-radius: 0.25rem;
+    border-radius: 4px;
   }
 
   #tvAddress {
     font: inherit;
-    color: inherit;
+    color: var(--text-primary);
     min-inline-size: 0;
     min-block-size: 2.35rem;
-    padding-block: 0.45rem;
+    padding-block: 0.4rem;
     padding-inline: 0.75rem;
     background: var(--bg-control);
-    border: 1px solid var(--border-strong);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm);
+  }
+
+  #tvAddress:focus {
+    border-color: var(--accent);
+  }
+
+  /* Home Assistant Material Switch */
+  .switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding-block: 0.25rem;
+  }
+
+  .ha-switch {
+    appearance: none;
+    position: relative;
+    inline-size: 2.4rem;
+    block-size: 1.35rem;
+    margin: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--switch-unchecked-track-color, var(--_fallback-switch-track));
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 160ms ease;
+  }
+
+  .ha-switch::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0.15rem;
+    inline-size: 1.05rem;
+    block-size: 1.05rem;
+    border-radius: 50%;
+    background: var(--switch-unchecked-button-color, #ffffff);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    transform: translateY(-50%);
+    transition: transform 160ms ease, background-color 160ms ease;
+  }
+
+  .ha-switch:checked {
+    background: var(--switch-checked-track-color, color-mix(in srgb, var(--accent) 55%, transparent));
+  }
+
+  .ha-switch:checked::after {
+    background: var(--switch-checked-button-color, var(--accent));
+    transform: translate(1.05rem, -50%);
   }
 
   .file {
@@ -610,48 +1090,32 @@
     flex-wrap: wrap;
   }
 
-  .asset:first-of-type {
-    margin-block-start: 0.15rem;
+  .asset:first-child {
+    margin-block-start: 0;
   }
 
   .quiet {
-    font-size: 0.86rem;
+    font-size: 0.83rem;
   }
 
   .filename {
-    font-size: 0.84rem;
-    margin-block: 0.4rem 0;
+    font-size: 0.8rem;
+    margin-block: 0.45rem 0;
   }
 
-  .checkbox-row {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    font-size: 0.88rem;
-  }
-
-  .checkbox-row input[type="checkbox"] {
-    inline-size: 1.15rem;
-    block-size: 1.15rem;
-    margin: 0;
-    cursor: pointer;
-  }
-
-  .checkbox-row label {
-    cursor: pointer;
-  }
-
+  /* Connected TV Slots */
   .tv-slots {
-    margin-block-start: 0.75rem;
-    padding: 0.6rem 0.7rem;
+    margin-block-start: 0.8rem;
+    padding: 0.65rem 0.75rem;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm);
-    background: var(--bg-stage);
+    background: color-mix(in srgb, var(--text-primary) 3%, var(--bg-page));
   }
 
   .tv-slots-title {
     margin: 0 0 0.45rem;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
+    font-weight: 500;
     color: var(--text-muted);
   }
 
@@ -665,7 +1129,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.45rem;
-    font-size: 0.84rem;
+    font-size: 0.82rem;
   }
 
   .tv-slot-info {
@@ -677,7 +1141,7 @@
 
   .tv-slot-code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--accent);
     overflow-wrap: anywhere;
   }
@@ -689,33 +1153,41 @@
   }
 
   .mini-btn {
-    min-block-size: 1.8rem;
-    padding-block: 0.2rem;
-    padding-inline: 0.5rem;
-    font-size: 0.78rem;
+    min-block-size: 1.75rem;
+    padding-block: 0.15rem;
+    padding-inline: 0.55rem;
+    font-size: 0.76rem;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border-color: var(--border-subtle);
+  }
+
+  .mini-btn:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    border-color: var(--border-strong);
   }
 
   .danger {
-    background: color-mix(in oklab, #c45147 26%, var(--bg-control));
-    border-color: #c9685f;
-    color: #ffe8e5;
+    background: color-mix(in srgb, var(--danger-color) 16%, transparent);
+    border-color: color-mix(in srgb, var(--danger-color) 55%, transparent);
+    color: var(--danger-color);
   }
 
   .danger:hover:not(:disabled) {
-    background: color-mix(in oklab, #c45147 42%, var(--bg-control));
-    border-color: #f0958d;
+    background: color-mix(in srgb, var(--danger-color) 26%, transparent);
+    border-color: var(--danger-color);
   }
 
-  /* Native modal dialog for Samsung The Frame gallery management */
+  /* Home Assistant Native Dialog Style */
   dialog {
     padding: 0;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    border-radius: max(var(--card-radius), 16px);
     background: var(--bg-surface);
     color: var(--text-primary);
     inline-size: min(64rem, calc(100vw - 2rem));
     max-block-size: calc(100dvh - 2.5rem);
-    box-shadow: 0 1.25rem 3.5rem rgba(0, 0, 0, 0.65);
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.25), 0 24px 38px 3px rgba(0, 0, 0, 0.2);
   }
 
   dialog[open] {
@@ -728,8 +1200,7 @@
   }
 
   dialog::backdrop {
-    background: rgba(10, 13, 12, 0.74);
-    backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.56);
     overflow: hidden;
     overscroll-behavior: contain;
   }
@@ -741,18 +1212,18 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    padding-block: 0.9rem;
-    padding-inline: 1.15rem;
+    padding: 0.9rem 1.2rem;
     border-block-end: 1px solid var(--border-subtle);
   }
 
-  .dialog-header h1 {
-    font-size: 1.35rem;
+  .dialog-header h2 {
+    font-size: 1.15rem;
+    font-weight: 500;
   }
 
   .dialog-subtitle {
-    margin: 0.25rem 0 0;
-    font-size: 0.86rem;
+    margin: 0.2rem 0 0;
+    font-size: 0.84rem;
     color: var(--text-muted);
   }
 
@@ -761,23 +1232,24 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
 
   .dialog-toolbar {
     background: var(--bg-page);
+    padding-block: 0.65rem;
   }
 
   .dialog-body {
     overflow-y: auto;
-    padding: 1.1rem 1.15rem;
+    padding: 1rem 1.2rem;
     flex: 1 1 auto;
   }
 
   .tv-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
-    gap: 0.9rem;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 0.85rem;
   }
 
   .tv-card {
@@ -786,13 +1258,13 @@
     gap: 0.55rem;
     padding: 0.65rem;
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm);
+    border-radius: var(--card-radius);
     background: var(--bg-page);
   }
 
   .tv-card.is-selected {
-    border-color: #d9756c;
-    background: color-mix(in oklab, #c45147 10%, var(--bg-page));
+    border-color: var(--danger-color);
+    background: color-mix(in srgb, var(--danger-color) 10%, var(--bg-page));
   }
 
   .tv-card.is-current {
@@ -803,7 +1275,7 @@
     position: relative;
     aspect-ratio: 16 / 9;
     background: var(--bg-stage);
-    border-radius: 0.25rem;
+    border-radius: 6px;
     overflow: hidden;
     display: grid;
     place-items: center;
@@ -831,13 +1303,13 @@
   }
 
   .tv-badge {
-    padding: 0.12rem 0.42rem;
-    border-radius: 999px;
+    padding: 0.14rem 0.5rem;
+    border-radius: var(--radius-pill);
     font-size: 0.72rem;
-    font-weight: 600;
-    background: rgba(17, 21, 19, 0.86);
-    color: var(--text-primary);
-    border: 1px solid var(--border-strong);
+    font-weight: 500;
+    background: rgba(17, 17, 17, 0.82);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .tv-badge.is-accent {
@@ -868,7 +1340,7 @@
   }
 
   .tv-card-date {
-    font-size: 0.75rem;
+    font-size: 0.74rem;
     color: var(--text-muted);
   }
 
@@ -882,7 +1354,7 @@
   .tv-empty {
     margin: 1rem 0;
     color: var(--text-muted);
-    font-size: 0.92rem;
+    font-size: 0.88rem;
   }
 }
 
@@ -892,13 +1364,73 @@
   }
 }
 
-@media (max-width: 860px) {
+/* Legacy scrollbar fallback for older WebKit without scrollbar-color */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@media (max-width: 960px) {
   main {
     grid-template-columns: minmax(0, 1fr);
+    padding: 0.75rem;
   }
 
   .workspace {
     position: static;
+  }
+
+  .preview-card {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .ha-toolbar {
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    padding-inline: 0.5rem 0.75rem;
+  }
+
+  .toolbar-start {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .brand-icon {
+    display: none;
+  }
+
+  .ha-toolbar h1 {
+    font-size: 1.125rem;
+  }
+
+  .toolbar-actions {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 0.35rem;
+  }
+
+  .toolbar-actions #saveSingle {
+    display: none;
+  }
+
+  .toolbar-actions #save {
+    padding-inline: 0.65rem;
+    min-inline-size: 2.35rem;
+  }
+
+  .toolbar-actions #save span {
+    display: none;
   }
 }
 
@@ -906,12 +1438,12 @@
   button,
   select,
   .file {
-    min-block-size: 2.75rem;
+    min-block-size: 2.5rem;
   }
 
   input[type="range"] {
-    --slider-thumb-size: 1.35rem;
-    block-size: 2.4rem;
+    --slider-thumb-size: 20px;
+    block-size: 2.2rem;
   }
 }
 
@@ -919,7 +1451,7 @@
   button,
   select,
   .file,
-  fieldset,
+  .ha-card,
   dialog,
   .stage,
   .ramp-card,
@@ -933,18 +1465,14 @@
   .toggle[aria-pressed="true"],
   .preset[aria-pressed="true"],
   .profile-btn[aria-pressed="true"],
+  .ha-btn-primary,
   #save,
   #sendTvBoth {
     border: 2px solid Highlight;
   }
 
-  input[type="range"]::-webkit-slider-thumb {
-    background: Highlight;
-    border-color: Canvas;
-  }
-
+  input[type="range"]::-webkit-slider-thumb,
   input[type="range"]::-moz-range-thumb {
     background: Highlight;
-    border-color: Canvas;
   }
 }
