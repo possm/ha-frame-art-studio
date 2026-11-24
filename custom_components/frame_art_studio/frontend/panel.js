@@ -33,20 +33,24 @@ class FrameArtStudioPanel extends HTMLElement {
       :host {
         display: flex;
         flex-direction: column;
-        block-size: 100%;
-        inline-size: 100%;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 100%;
         background: #181d1b;
+        overflow: hidden;
       }
       .ha-mobile-bar {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        padding: 0.5rem 0.9rem;
+        padding: calc(0.5rem + env(safe-area-inset-top, 0px)) 0.9rem 0.5rem;
         background: #141917;
         color: #f4efe6;
         border-block-end: 1px solid #47524b;
         font-family: system-ui, -apple-system, sans-serif;
         font-size: 0.95rem;
+        flex: 0 0 auto;
       }
       .ha-mobile-bar[hidden] {
         display: none;
@@ -62,11 +66,13 @@ class FrameArtStudioPanel extends HTMLElement {
         cursor: pointer;
       }
       iframe {
-        flex: 1 1 auto;
-        inline-size: 100%;
-        block-size: 100%;
+        flex: 1 1 0%;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
         border: 0;
         display: block;
+        background: #181d1b;
       }
     `;
 
@@ -88,7 +94,7 @@ class FrameArtStudioPanel extends HTMLElement {
 
     const iframe = document.createElement('iframe');
     iframe.title = 'Frame Art Studio';
-    iframe.src = '/frame_art_studio_static/index.html?ha=1';
+    iframe.src = '/frame_art_studio_static/index.html?ha=1&v=1.0.0-2';
     iframe.addEventListener('load', () => this._attachBridge());
     this._iframe = iframe;
 

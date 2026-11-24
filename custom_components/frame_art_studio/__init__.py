@@ -20,6 +20,7 @@ from .const import (
     DEFAULT_NAME,
     DEFAULT_SHOW_SIDEBAR,
     DOMAIN,
+    FRONTEND_ASSET_VERSION,
     PANEL_ICON,
     PANEL_TITLE,
     PANEL_URL_PATH,
@@ -124,7 +125,7 @@ async def _async_sync_sidebar_panel(hass: HomeAssistant, domain_data: dict) -> N
             frontend_url_path=PANEL_URL_PATH,
             sidebar_title=PANEL_TITLE,
             sidebar_icon=PANEL_ICON,
-            module_url=f"{STATIC_URL_PATH}/panel.js",
+            module_url=f"{STATIC_URL_PATH}/panel.js?v={FRONTEND_ASSET_VERSION}",
             embed_iframe=False,
             require_admin=False,
         )

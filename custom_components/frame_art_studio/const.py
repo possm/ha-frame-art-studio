@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 
 DOMAIN = "frame_art_studio"
+VERSION = "1.0.0"
+FRONTEND_ASSET_VERSION = "1.0.0-2"
 
 CONF_HOST = "host"
 CONF_NAME = "name"
